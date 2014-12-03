@@ -11,30 +11,30 @@ describe('uicatalog - basic @skip-ios6', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    if (env.FAST_TESTS) {
-      beforeEach(function (done) {
-        driver
-          .back()
-          .nodeify(function () { done(); });
-      });
-    }
-
-    it('should confirm element is not visible', function (done) {
-      driver
-        .elementByXPath("//UIAStaticText[contains(" + textTag + ", 'Buttons')]").click()
-        .elementByXPath("//UIANavigationBar/UIAImage")
-        .isDisplayed()
-          .should.not.eventually.be.ok
-        .nodeify(done);
-    });
-
-    it('should confirm element is visible', function (done) {
-      driver
-        .elementByXPath("//UIAStaticText[contains(" + textTag + ", 'Buttons')]").click()
-        .elementByXPath("//UIATableGroup[@name = 'SYSTEM (CONTACT ADD)']")
-          .should.eventually.be.ok
-        .nodeify(done);
-    });
+//    if (env.FAST_TESTS) {
+//      beforeEach(function (done) {
+//        driver
+//          .back()
+//          .nodeify(function () { done(); });
+//      });
+//    }
+//
+//    it('should confirm element is not visible', function (done) {
+//      driver
+//        .elementByXPath("//UIAStaticText[contains(" + textTag + ", 'Buttons')]").click()
+//        .elementByXPath("//UIANavigationBar/UIAImage")
+//        .isDisplayed()
+//          .should.not.eventually.be.ok
+//        .nodeify(done);
+//    });
+//
+//    it('should confirm element is visible', function (done) {
+//      driver
+//        .elementByXPath("//UIAStaticText[contains(" + textTag + ", 'Buttons')]").click()
+//        .elementByXPath("//UIATableGroup[@name = 'SYSTEM (CONTACT ADD)']")
+//          .should.eventually.be.ok
+//        .nodeify(done);
+//    });
 
     it('should confirm element is selected', function (done) {
       driver

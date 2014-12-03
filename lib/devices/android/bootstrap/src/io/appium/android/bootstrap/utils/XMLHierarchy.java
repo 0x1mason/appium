@@ -76,6 +76,7 @@ public abstract class XMLHierarchy {
     dumpFile.delete();
 
     try {
+      
       // dumpWindowHierarchy often has a NullPointerException
       UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
     } catch (Exception e) {

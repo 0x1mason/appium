@@ -3,10 +3,12 @@ package com.android.uiautomator.common;
 import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.Logger;
 import android.view.InputEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
+import java.lang.reflect.InvocationTargetException;
 
 public class ReflectionUtils {
   private static Field enableField(final Class<?> clazz, final String field)
@@ -20,12 +22,26 @@ public class ReflectionUtils {
 
   private Object controller = null;
   private Object bridge = null;
+  private Object queryController = null;
 
   public ReflectionUtils() throws IllegalArgumentException,
       IllegalAccessException, SecurityException, NoSuchFieldException {
     final UiDevice device = UiDevice.getInstance();
     bridge = enableField(device.getClass(), "mUiAutomationBridge")
         .get(device);
+    Method getQueryController = null;
+    Logger.debug(bridge.getClass().getCanonicalName());
+ //   try {
+      //getQueryController = getMethod(bridge.getClass(), "getQueryController");
+      //queryController = getQueryController.invoke(bridge);
+      queryController = enableField(bridge.getClass().getSuperclass(), "mQueryController")
+        .get(bridge);
+  //  } catch (NoSuchMethodException e) {
+ //     throw new IllegalAccessException("Did not find getQueryController");
+  //  } catch (InvocationTargetException ex) {
+ //     throw new IllegalAccessException("Failed to invoke getQueryController");
+ //   }
+    
     if (API_18) {
       controller = enableField(bridge.getClass().getSuperclass(),
           "mInteractionController").get(bridge);
@@ -33,6 +49,12 @@ public class ReflectionUtils {
       controller = enableField(bridge.getClass(), "mInteractionController")
           .get(bridge);
     }
+  }
+  
+  public AccessibilityNodeInfo getAccessibilityRootNode() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+      Class queryControllerClass = queryController.getClass();
+      Method getRoot = getMethod(queryControllerClass, "getAccessibilityRootNode");
+      return (AccessibilityNodeInfo) getRoot.invoke(queryController);
   }
 
   /*

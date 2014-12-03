@@ -4,6 +4,8 @@ var env = require('../../../../helpers/env')
   , setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , reset = require("../reset")
+  , XMLDom = require("xmldom").DOMParser
+  , xpath = require("xpath")
   , atv = 'android.widget.TextView';
 
 describe("apidemo - find - basics", function () {
@@ -17,70 +19,102 @@ describe("apidemo - find - basics", function () {
     });
   }
 
-  it('should find a single element by content-description', function (done) {
+  //it('should find a single element by content-description', function (done) {
+  //  driver
+  //    .elementByName("Animation").text().should.become("Animation")
+  //    .nodeify(done);
+  //});
+  //it('should find an element by class name', function (done) {
+  //  driver
+  //    .elementByClassName("android.widget.TextView").text().should.become("API Demos")
+  //    .nodeify(done);
+  //});
+  //it('should find multiple elements by class name', function (done) {
+  //  driver
+  //    .elementsByClassName("android.widget.TextView")
+  //      .should.eventually.have.length.at.least(10)
+  //    .nodeify(done);
+  //});
+  //it('should not find an element that doesnt exist', function (done) {
+  //  driver
+  //    .elementByClassName("blargimarg").should.be.rejectedWith(/status: 7/)
+  //    .nodeify(done);
+  //});
+  //it('should not find multiple elements that doesnt exist', function (done) {
+  //  driver
+  //    .elementsByClassName("blargimarg").should.eventually.have.length(0)
+  //    .nodeify(done);
+  //});
+  //it('should fail on empty locator', function (done) {
+  //  driver.elementsByClassName("")
+  //    .catch(function (err) { throw err.data; }).should.be.rejectedWith(/selector/)
+  //    .elementsByClassName(atv).should.eventually.exist
+  //    .nodeify(done);
+  //});
+  //
+  //// TODO: The new version of ApiDemo doesn't use id, find a better example.
+  //it('should find a single element by id @skip-android-all', function (done) {
+  //  driver
+  //    .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).click()
+  //    .elementByXPath("//android.widget.TextView[@text='Buttons']").click()
+  //    .elementById("buttons_1_normal").text().should.become("Normal")
+  //    .nodeify(done);
+  //});
+  //// TODO: The new version of ApiDemo doesn't use id, find a better example.
+  //it('should find a single element by string id @skip-android-all', function (done) {
+  //  driver
+  //    .elementById("activity_sample_code").text().should.become("API Demos")
+  //    .nodeify(done);
+  //});
+  //it('should find a single element by resource-id', function (done) {
+  //  driver
+  //    .elementById('android:id/home').should.eventually.exist
+  //    .nodeify(done);
+  //});
+  //it('should find multiple elements by resource-id', function (done) {
+  //  driver
+  //    .elementsById('android:id/text1')
+  //      .should.eventually.have.length.at.least(10)
+  //    .nodeify(done);
+  //});
+
+
+  var tb = "android:id/ToggleButton";
+  var tl = "android:id/TestLabel";
+
+  var assertSource = function (source) {
+    source.should.exist;
+    var dom = new XMLDom().parseFromString(source);
+    var nodes = xpath.select('//android.widget.TextView[@content-desc="label"]', dom);
+    nodes.length.should.equal(1);
+  };
+
+  it('should return the page source', function (done) {
     driver
-      .elementByName("Animation").text().should.become("Animation")
-      .nodeify(done);
-  });
-  it('should find an element by class name', function (done) {
-    driver
-      .elementByClassName("android.widget.TextView").text().should.become("API Demos")
-      .nodeify(done);
-  });
-  it('should find multiple elements by class name', function (done) {
-    driver
-      .elementsByClassName("android.widget.TextView")
-        .should.eventually.have.length.at.least(10)
-      .nodeify(done);
-  });
-  it('should not find an element that doesnt exist', function (done) {
-    driver
-      .elementByClassName("blargimarg").should.be.rejectedWith(/status: 7/)
-      .nodeify(done);
-  });
-  it('should not find multiple elements that doesnt exist', function (done) {
-    driver
-      .elementsByClassName("blargimarg").should.eventually.have.length(0)
-      .nodeify(done);
-  });
-  it('should fail on empty locator', function (done) {
-    driver.elementsByClassName("")
-      .catch(function (err) { throw err.data; }).should.be.rejectedWith(/selector/)
-      .elementsByClassName(atv).should.eventually.exist
-      .nodeify(done);
+      //.elementById(tl) // waiting for page to load
+      .source()
+      .then(function (source) {
+        console.log(source);
+        assertSource(source);
+      }).nodeify(done);
   });
 
-  // TODO: The new version of ApiDemo doesn't use id, find a better example.
-  it('should find a single element by id @skip-android-all', function (done) {
+
+
+
+
+
+  it('should find elements by id', function (done) {
     driver
-      .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).click()
-      .elementByXPath("//android.widget.TextView[@text='Buttons']").click()
-      .elementById("buttons_1_normal").text().should.become("Normal")
-      .nodeify(done);
-  });
-  // TODO: The new version of ApiDemo doesn't use id, find a better example.
-  it('should find a single element by string id @skip-android-all', function (done) {
-    driver
-      .elementById("activity_sample_code").text().should.become("API Demos")
-      .nodeify(done);
-  });
-  it('should find a single element by resource-id', function (done) {
-    driver
-      .elementById('android:id/home').should.eventually.exist
-      .nodeify(done);
-  });
-  it('should find multiple elements by resource-id', function (done) {
-    driver
-      .elementsById('android:id/text1')
-        .should.eventually.have.length.at.least(10)
-      .nodeify(done);
-  });
-  it('should find multiple elements by resource-id even when theres just one', function (done) {
-    driver
-      .elementsById('android:id/home')
-      .then(function (els) {
-        els.length.should.equal(1);
-      })
-      .nodeify(done);
+      .elementsById(tb)
+      .should.eventually.exist
+      .elementsById(tl)
+      .should.eventually.exist
+      .source()
+      .then(function (source) {
+        console.log(source);
+        assertSource(source);
+      }).nodeify(done);
+     // .nodeify(done);
   });
 });
