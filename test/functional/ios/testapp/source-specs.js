@@ -10,8 +10,8 @@ var sourceIsRight = function (driver) {
   return new ChaiAsserter(function () {
     return driver.source().then(function (source) {
       var dom = new XMLDom().parseFromString(source);
-      var nodes = xpath.select('//UIAButton', dom);
-      nodes.length.should.equal(7);
+      var nodes = xpath.select('//AppiumAUT', dom);
+      nodes.should.not.be.empty;
     });
   });
 };

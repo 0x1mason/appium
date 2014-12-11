@@ -6,7 +6,10 @@
 var path = require('path')
   , _ = require('underscore')
   , IOS = require('../../lib/devices/ios/ios.js')
-  , expect = require('chai').expect;
+  , chai = require('chai')
+  , expect = chai.expect;
+
+chai.should();
 
 describe('IOS', function () {
   var device;
@@ -55,9 +58,26 @@ describe('IOS', function () {
       });
     });
 
-    it('should return a dictionary', function (done) {
-      device.parseLocalizableStrings(function () {
+    it('should return a dictionary with data from Localizable.strings file', function (done) {
+      device.parseLocalizableStrings(device.args.language, null, function () {
         device.localizableStrings.should.eql({ 'main.button.computeSum' : 'Compute Sum' });
+        done();
+      });
+    });
+
+    it('should return a dictionary for custom.strings file', function (done) {
+      device.parseLocalizableStrings(device.args.language, 'custom.strings', function () {
+        device.localizableStrings.should.eql({'key' : 'custom file'});
+        done();
+      });
+    });
+
+    it('should return an empty object for unknown file', function (done) {
+      _.extend(device.args,{
+        localizableStringsDir: stubApp + "/en.lporj"
+      });
+      device.parseLocalizableStrings(device.args.language, 'unknown_file', function () {
+        expect(device.localizableStrings).to.be.empty;
         done();
       });
     });

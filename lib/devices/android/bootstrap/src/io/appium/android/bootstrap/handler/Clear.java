@@ -170,9 +170,13 @@ public class Clear extends CommandHandler {
       Logger.debug("Could not check for hint text: " + e.getMessage());
       return false;
     }
+<<<<<<< HEAD
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_BUTTON_THUMBR, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_BUTTON_THUMBL, 0);
+=======
+    
+>>>>>>> e9bd71460fc080648d968e87515677030b7dcade
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_FORWARD_DEL, 0);
     return currText.equals(el.getText());
