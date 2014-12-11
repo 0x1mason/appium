@@ -51,6 +51,17 @@ public class ReflectionUtils {
     }
   }
   
+  public boolean setUnsealed(AccessibilityNodeInfo node) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+      
+      Method getRoot = getMethod(node.getClass(), "setUnsealed", Boolean.class);
+      return (Boolean) getRoot.invoke(node, false);
+  }
+  
+  public boolean refreshNodeInfo(AccessibilityNodeInfo node) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {    
+      Method getRoot = getMethod(node.getClass(), "refresh", boolean.class);
+      return (Boolean) getRoot.invoke(node, true);
+  }
+  
   public AccessibilityNodeInfo getAccessibilityRootNode() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
       Class queryControllerClass = queryController.getClass();
       Method getRoot = getMethod(queryControllerClass, "getAccessibilityRootNode");

@@ -78,7 +78,8 @@ public abstract class XMLHierarchy {
     try {
       
       // dumpWindowHierarchy often has a NullPointerException
-      UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+      //UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+      NodeInfoDumper.dumpWindowHierarchy(dumpFileName);
     } catch (Exception e) {
       e.printStackTrace();
       // If there's an error then the dumpfile may exist and be empty.

@@ -151,16 +151,20 @@ public abstract class NodeInfoDumper {
         serializer.attribute("", "bounds", getVisibleBoundsInScreen(
                 node, width, height).toShortString());
         int count = node.getChildCount();
+        try{
+                   ReflectionUtils ref = new ReflectionUtils();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo child = node.getChild(i);
             
             if (child != null) {
+              assert(ref.setUnsealed(child));
+              
               // this is a change from Google's original implementation
-//              if(!child.refresh()) {
-//                Logger.debug("Stale node, recycling child at index " + Integer.toString(i));
-//                child.recycle();
-//                continue;
-//              }
+              if(!ref.refreshNodeInfo(child)) {
+                Logger.debug("Stale node, recycling child at index " + Integer.toString(i));
+                child.recycle();
+                continue;
+              }
                 if (child.isVisibleToUser()) {
                     dumpNodeRec(child, serializer, i, width, height);
                     child.recycle();
@@ -172,6 +176,7 @@ public abstract class NodeInfoDumper {
                         i, count, node.toString()));
             }
         }
+        }catch(Exception e){}
         serializer.endTag("", "node");
     }
 
