@@ -70,7 +70,7 @@ public class AndroidElementsHash {
    * @throws ElementNotFoundException
    */
   public AndroidElement getElement(final UiSelector sel, final String key)
-      throws ElementNotFoundException {
+      throws UiObjectNotFoundException {
     AndroidElement baseEl;
     baseEl = elements.get(key);
     UiObject el;
@@ -78,17 +78,13 @@ public class AndroidElementsHash {
     if (baseEl == null) {
       el = new UiObject(sel);
     } else {
-      try {
         el = baseEl.getChild(sel);
-      } catch (final UiObjectNotFoundException e) {
-        throw new ElementNotFoundException();
-      }
     }
 
     if (el.exists()) {
       return addElement(el);
     } else {
-      throw new ElementNotFoundException();
+      throw new UiObjectNotFoundException("Failed to locate element with selector " + sel.toString());
     }
   }
 
@@ -132,6 +128,7 @@ public class AndroidElementsHash {
 
     UiSelector tmp;
     int counter = 0;
+    
     while (keepSearching) {
       if (baseEl == null) {
         Logger.debug("Element[" + key + "] is null: (" + counter + ")");

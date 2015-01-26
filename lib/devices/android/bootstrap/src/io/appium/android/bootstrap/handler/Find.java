@@ -124,31 +124,28 @@ public class Find extends CommandHandler {
 
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId + " multiple: " + multiple);
-
+    
+    boolean found = false;
+    
     try {
       Object result = null;
       final List<UiSelector> selectors = getSelectors(strategy, text, multiple);
       if (!multiple) {
-        for (final UiSelector sel : selectors) {
+        for (int i = 0; i < selectors.size() && !found; i++) {
           try {
-            Logger.debug("Using: " + sel.toString());
-            result = fetchElement(sel, contextId);
-          } catch (final ElementNotFoundException ignored) {
-          }
-          if (result != null) {
-            break;
+            Logger.debug("Using: " + selectors.get(i).toString());
+            result = fetchElement(selectors.get(i), contextId);
+            found = result != null;
+          } catch (final UiObjectNotFoundException ignored) {
           }
         }
       } else {
         List<AndroidElement> foundElements = new ArrayList<AndroidElement>();
-        for (final UiSelector sel : selectors) {
-          // With multiple selectors, we expect that some elements may not
-          // exist.
+        for (int i = 0; i < selectors.size() && !found; i++) {
           try {
-            Logger.debug("Using: " + sel.toString());
-            final List<AndroidElement> elementsFromSelector = fetchElements(
-                sel, contextId);
-            foundElements.addAll(elementsFromSelector);
+            Logger.debug("Using: " + selectors.get(i).toString());
+            foundElements.addAll(fetchElements(selectors.get(i), contextId));
+            found = foundElements.size() > 0;
           } catch (final UiObjectNotFoundException ignored) {
           }
         }
@@ -158,7 +155,7 @@ public class Find extends CommandHandler {
         result = elementsToJSONArray(foundElements);
       }
 
-      if (result == null) {
+      if (!found) {
         if (!isRetry) {
           Logger
               .debug("Failed to locate element. Clearing Accessibility cache and retrying.");
@@ -208,7 +205,7 @@ public class Find extends CommandHandler {
    * @throws ElementNotFoundException
    */
   private JSONObject fetchElement(final UiSelector sel, final String contextId)
-      throws JSONException, ElementNotFoundException {
+      throws JSONException, UiObjectNotFoundException {
     final JSONObject res = new JSONObject();
     final AndroidElement el = elements.getElement(sel, contextId);
     return res.put("ELEMENT", el.getId());
